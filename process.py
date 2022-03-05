@@ -4,14 +4,24 @@ from typing import List
 gap = 40
 target_width = 720
 
-def process_image(filename:str)->str:
-    filename = pre_process_image(pre_process_image(filename))
+def process_image(filename:str):
+    img = cv2.imread(filename)
+    img = pre_process_image(img)
     return_filename = "processing/processed.jpg"
     
-    img = cv2.imread(filename)
+    img = resize(720, resize(200, img))
+    cv2.imwrite(return_filename, img)
+    
+    img = process_image_gauss(img)
+    
+    return img
+
+def process_image_gauss(img):
+    return_filename = "processing/gauss_processed.jpg"
+    
     imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
-    blur = cv2.GaussianBlur(imggray, (0,0), sigmaX=33, sigmaY=33)
+    blur = cv2.GaussianBlur(imggray, (0,0), sigmaX=50, sigmaY=50)
     divide = cv2.divide(imggray, blur, scale=255)
 
     thresh = cv2.threshold(divide, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
@@ -20,11 +30,10 @@ def process_image(filename:str)->str:
     img = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 
     cv2.imwrite(return_filename, img)
-    return return_filename
+    return img
 
-def pre_process_image(filename:str)-> str:
+def pre_process_image(img):
     return_filename = "processing/pre_processed.jpg"
-    img = cv2.imread(filename)
     
     imgwidth = img.shape[1]
     height = int(img.shape[0] * target_width/imgwidth)
@@ -32,7 +41,7 @@ def pre_process_image(filename:str)-> str:
     
     img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
     
-    img = cv2.GaussianBlur(img, (0,0), sigmaX=10, sigmaY=10)
+    img = cv2.GaussianBlur(img, (0,0), sigmaX=1, sigmaY=1)
     
     colors = {}
     rows, cols, f = img.shape
@@ -60,13 +69,13 @@ def pre_process_image(filename:str)-> str:
             
     for i in range(rows):
         for j in range(cols):
-            if are_equal(round_pixel(img[i][j], gap*5), freq_color):
+            if are_equal(round_pixel(img[i][j], gap*6), freq_color):
                 img[i][j] = freq_color
             
     
     print(freq_color)
     cv2.imwrite(return_filename, img)
-    return return_filename
+    return img
 
 def round_pixel(pixel, val)->List[int]:
     for i in range(len(pixel)):
@@ -81,3 +90,12 @@ def are_equal(pixel, freq)->bool:
 
 def get_key(pixel)-> str:
     return str(pixel[0]) + str(pixel[1]) + str(pixel[2])
+
+def resize(target_width:int, img):
+    imgwidth = img.shape[1]
+    height = int(img.shape[0] * target_width/imgwidth)
+    dim = (target_width, height)
+    
+    img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+    
+    return img

@@ -3,8 +3,8 @@ import process
 import sys
 
 def get_outline(filename: str)-> str:
-    processed = process.process_image(filename)
-    return victim_detect.find_victim(filename, processed)
+    img = process.process_image(filename)
+    return victim_detect.find_victim(filename, img)
 
 
 

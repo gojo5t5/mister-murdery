@@ -2,16 +2,13 @@ import cv2
 
 target_width = 720
 
-def find_victim(filename:str, processed:str) -> str:
+def find_victim(filename:str, processed_img) -> str:
     return_filename = "output/result.jpg"
     true_img = cv2.imread(filename)
-    img = cv2.imread(processed)
-    true_img = cv2.resize(true_img, (img.shape[1], img.shape[0]), interpolation = cv2.INTER_AREA)
+    true_img = cv2.resize(true_img, (processed_img.shape[1], processed_img.shape[0]), interpolation = cv2.INTER_AREA)
     
     
-    
-    
-    imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    imggray = processed_img
     imggray = cv2.blur(imggray, (10, 10))
     threshold = find_mean(imggray)
     print(threshold)
@@ -32,10 +29,3 @@ def find_victim(filename:str, processed:str) -> str:
 def find_mean(img_gray:any) -> int:
     gray_r = img_gray.reshape(img_gray.shape[0]*img_gray.shape[1])
     return gray_r.mean()
-    # for i in range(gray_r.shape[0]):
-    #     if gray_r[i] > gray_r.mean():
-    #         gray_r[i] = 1
-    #     else:
-    #         gray_r[i] = 0
-    # gray = gray_r.reshape(gray.shape[0],gray.shape[1])
-    # cv2.imwrite()
