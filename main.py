@@ -1,11 +1,12 @@
 import victim_detect
+import process
+import sys
 
 def get_outline(filename: str)-> str:
-    process = process(filename)
-    return victim_detect.find_victim(process)
+    processed = process.process_image(filename)
+    return victim_detect.find_victim(filename, processed)
 
-def process(filename:str)-> str:
-    return "processed.jpg"
+
 
 if __name__ == "__main__":
-    get_outline("plain.jpg")
+    get_outline(sys.argv[1]);
