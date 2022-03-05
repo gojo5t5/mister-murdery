@@ -1,4 +1,6 @@
+from gettext import find
 import cv2
+from victim_detect import find_mean
 from typing import List
 
 gap = 40
@@ -6,25 +8,49 @@ target_width = 720
 
 def process_image(filename:str):
     img = cv2.imread(filename)
-    img = pre_process_image(img)
+    
+    img = pre_process_image(pre_process_image(img))
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite("greyscaled.jpg", img)
     return_filename = "processing/processed.jpg"
     
-    img = resize(720, resize(200, img))
+    img = resize(720, resize(300, img))
     cv2.imwrite(return_filename, img)
     
     img = process_image_gauss(img)
     
     return img
 
-def process_image_gauss(img):
+def process_image_gauss(imggray):
     return_filename = "processing/gauss_processed.jpg"
     
-    imggray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(imggray, (0,0), sigmaX=5, sigmaY=5)
     
-    blur = cv2.GaussianBlur(imggray, (0,0), sigmaX=50, sigmaY=50)
-    divide = cv2.divide(imggray, blur, scale=255)
+    x, y = blur.shape
+    
+    cv2.imwrite("processing/blur.jpg", blur)
+    
+    divide = imggray
+    
+    for i in range(x):
+        for j in range(y):
+            divide[i][j] = (divide[i][j] + blur[i][j])/2
+    
+    cv2.imwrite("processing/divide.jpg", divide)
 
-    thresh = cv2.threshold(divide, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
+    t = find_most_freq(imggray, x, y)
+    print("t =", t)
+    thresh = cv2.threshold(divide, t, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
+    
+    blur = cv2.GaussianBlur(thresh, (0,0), sigmaX=5, sigmaY=5)
+
+    for i in range(x):
+        for j in range(y):
+            thresh[i][j] = (thresh[i][j] + blur[i][j])/2
+    
+    thresh = cv2.threshold(thresh, t, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
+    
+    cv2.imwrite("processing/thresh.jpg", thresh)
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
     img = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
@@ -45,6 +71,7 @@ def pre_process_image(img):
     
     colors = {}
     rows, cols, f = img.shape
+    print(img.shape)
     
     print(rows, " - ", cols)
     
@@ -99,3 +126,25 @@ def resize(target_width:int, img):
     img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
     
     return img
+
+def find_most_freq(img, x, y):
+    colors = {}
+    
+    for i in range(x):
+        for j in range(y):
+            key = img[i][j]
+            
+            if key in colors:
+                colors[key] += 1
+            else:
+                colors[key] = 1
+
+    most_freq = 0;
+    freq_color = -1
+    for key in colors:
+        freq = colors[key]
+        if freq > most_freq:
+            most_freq = freq
+            freq_color = key
+    
+    return freq_color
