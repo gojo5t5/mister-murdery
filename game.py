@@ -1,14 +1,10 @@
-from lib2to3.pytree import LeafPattern
 import tkinter as tk, cv2
-from click import command
-from turtle import width
-from tkinter import Button, filedialog, PhotoImage, Canvas, NW, Label
-from tkinter import *
-from PIL import ImageTk, Image
+import tkinter
+from tkinter import Button, filedialog, Label, PhotoImage
 
 #global variables
 imageSelected = False
-fileImg = "";
+fileImg = ""
 
 root = tk.Tk()
 root.title("Murder Mystery")
@@ -18,18 +14,21 @@ root.resizable(False, False)
 
 def importImage():
     print("importImage")
+    global fileImg
     fileImg = filedialog.askopenfilename(initialdir = ".",
                                         title = "Open",
                                         filetypes=(("image", "*.jpg*;*.jpeg*"), ("all files", "*.*")))
     if (fileImg != ""):
-        imageSelected = True   
+        global imageSelected
+        imageSelected = True
+        print(imageSelected) 
         setImage(fileImg)
         lblFilename = Label(root, text="Image loaded: " + fileImg, font="5")
         lblFilename.place(x = 10, y = 400)
 
-def setImage(file):
+def setImage(fileImg):
     print("setImage")
-    img = cv2.imread(file)
+    img = cv2.imread(fileImg)
     imgResized = ResizeWithAspectRatio(img, width = 800)
     cv2.imshow('Loaded Image', imgResized)
 
@@ -43,9 +42,13 @@ def setImage(file):
 
 def detectImg():
     print("detectImg")
-    if (imageSelected):
+    if (imageSelected == True):
+        print(imageSelected)
         #shows the image fileImg - TO CHANGE
         setImage(fileImg)
+    else:
+        print(imageSelected) 
+        tk.messagebox.showinfo("Error", "Import an image before trying to detect a person")
 
 #function copied from https://stackoverflow.com/questions/35180764/opencv-python-image-too-big-to-display
 def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
@@ -63,7 +66,8 @@ def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
 
     return cv2.resize(image, dim, interpolation=inter)
 
-imgBackgr = PhotoImage(file = "background.png")
+#if there's an error change the filepath of the background image
+imgBackgr = PhotoImage(file = "mister-murdery/background.png")
 lblBackgr = Label(root, image = imgBackgr)
 lblBackgr.place(x = 0, y = 0)
 
