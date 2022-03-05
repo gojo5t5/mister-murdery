@@ -9,4 +9,4 @@ def get_outline(filename: str)-> str:
 
 
 if __name__ == "__main__":
-    get_outline(sys.argv[1]);
+    get_outline(sys.argv[1])
