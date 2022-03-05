@@ -12,7 +12,6 @@ def find_victim(filename:str) -> str:
 
     cv2.drawContours(img, contours, -1, (0, 255, 0), 5)
     cv2.imwrite(return_filename, img)
-
     cv2.imwrite("tresh.jpg", thresh)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
