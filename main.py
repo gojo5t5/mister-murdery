@@ -1,11 +1,14 @@
 import victim_detect
 import process
 import sys
-from sklearn.cluster import KMeans
+import cv2
+import sklearn.cluster
 import matplotlib.pyplot as plt
 
 def get_outline(filename: str)-> str:
-    img = process.process_image(filename)
+    kmeans_name = "processing/kmeans.jpg"
+    cv2.imwrite(kmeans_name, k_means_processin(filename))
+    img = process.process_image(kmeans_name)
     return victim_detect.find_victim(filename, img)
 
 def k_means_processin(filepath: str) -> any:
