@@ -16,6 +16,17 @@ def find_victim(filename:str) -> str:
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
-    return return_filename;
+    return return_filename
 
 find_victim("plain.jpg")
+
+def find_mean(img_gray:any) -> int:
+    gray_r = img_gray.reshape(img_gray.shape[0]*img_gray.shape[1])
+    return gray_r.mean()
+    # for i in range(gray_r.shape[0]):
+    #     if gray_r[i] > gray_r.mean():
+    #         gray_r[i] = 1
+    #     else:
+    #         gray_r[i] = 0
+    # gray = gray_r.reshape(gray.shape[0],gray.shape[1])
+    # cv2.imwrite()
