@@ -23,7 +23,7 @@ def find_victim(filename:str, processed_img) -> str:
     
     contours = sorted(contours, key=len, reverse=True)
     
-    contours = contours[0:3]
+    contours = contours[0:10]
     
     closest_contour = []
     closest_distance = 5000000;
