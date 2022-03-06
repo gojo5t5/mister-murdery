@@ -45,18 +45,16 @@ def process_image_gauss(imggray):
     print("t =", t)
     t = 255/(1 + math.exp(0.06*(128 - t)))
     print("t =", t)
-    thresh = cv2.adaptiveThreshold(divide, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
-                                          cv2.THRESH_BINARY, 101, 5)
+    thresh = cv2.threshold(divide, t, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
     cv2.imwrite("processing/thresh_1.jpg", thresh)
     
     blur = cv2.GaussianBlur(thresh, (0,0), sigmaX=5, sigmaY=5)
 
     for i in range(x):
         for j in range(y):
-            thresh[i][j] = (thresh[i][j] + blur[i][j])/2
+            thresh[i][j] = (thresh[i][j]*2 + blur[i][j])/3
     
-    thresh = cv2.adaptiveThreshold(thresh, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
-                                          cv2.THRESH_BINARY, 101, 5)
+    thresh = cv2.threshold(thresh, t, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
     
     cv2.imwrite("processing/thresh.jpg", thresh)
 
