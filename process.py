@@ -85,7 +85,7 @@ def pre_process_image(img):
             else:
                 colors[key] = [pixel, 1]
 
-    most_freq = 0;
+    most_freq = 0
     freq_color = []
     for key in colors:
         entry = colors[key]
@@ -139,7 +139,7 @@ def find_most_freq(img, x, y):
             else:
                 colors[key] = 1
 
-    most_freq = 0;
+    most_freq = 0
     freq_color = -1
     for key in colors:
         freq = colors[key]
