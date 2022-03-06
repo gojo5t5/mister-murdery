@@ -8,11 +8,14 @@ import matplotlib.pyplot as plt
 import random
 
 center_to_color_dict = {}
+colors = [[0, 0, 0], [255, 255, 255], [255, 0, 0], [0, 255, 0], [0, 0, 255]]
+count = 0
 
 def get_outline(filename: str)-> str:
     kmeans_name = "processing/kmeans.jpg"
     cv2.imwrite(kmeans_name, k_means_processing(filename))
-    img = process.process_image(kmeans_name)
+    cv2.imwrite("p.jpg", process.process_image(filename))
+    img = process.process_image("p.jpg")
     return find_victim(filename, img)
 
 def k_means_processing(filepath: str) -> any:
@@ -23,26 +26,26 @@ def k_means_processing(filepath: str) -> any:
     cluster_pic = pic2show.reshape(pic.shape[0], pic.shape[1], pic.shape[2])
     for i in range(pic.shape[0]):
         for j in range(pic.shape[1]):
-            cluster_pic[i][j] = convert_center_to_color(cluster_pic[i][j])
+            cluster_pic[i][j] = convert_center_to_color(cluster_pic[i][j], count)
     print("CHECKPOINT1")
     return cluster_pic
 
-def convert_center_to_color(center: array):
+def convert_center_to_color(center: array, count: int):
 
     def get_key(center)-> str:
         return str(center[0]) + str(center[1]) + str(center[2])
 
     def get_color() -> array:
-        return [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
+        return colors[len(center_to_color_dict)]
 
     string = get_key(center)
     if string not in center_to_color_dict:
         center_to_color_dict[string] = get_color()
     return center_to_color_dict[string]
 
-def get_outline(filename: str)-> str:
-    img = process.process_image(filename)
-    return find_victim(filename, img)
+# def get_outline(filename: str)-> str:
+#     img = process.process_image(filename)
+#     return find_victim(filename, img)
 
 if __name__ == "__main__":
     get_outline(sys.argv[1]) 

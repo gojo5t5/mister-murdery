@@ -81,7 +81,7 @@ def pre_process_image(img):
     
     for i in range(0, rows, int(rows/gap)):
         for j in range(0, cols, int(cols/gap)):
-            pixel = round_pixel(img[i][j], gap)
+            pixel = round_pixel(img[i][j], gap*2)
             key = get_key(pixel)
             
             if key in colors:
