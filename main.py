@@ -13,9 +13,9 @@ count = 0
 
 def get_outline(filename: str)-> str:
     kmeans_name = "processing/kmeans.jpg"
-    cv2.imwrite(kmeans_name, k_means_processing(filename))
+    # cv2.imwrite(kmeans_name, k_means_processing(filename))
     cv2.imwrite("p.jpg", process.process_image(filename))
-    img = process.process_image("p.jpg")
+    img = process.process_image(filename)
     return find_victim(filename, img)
 
 def k_means_processing(filepath: str) -> any:

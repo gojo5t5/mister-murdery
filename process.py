@@ -1,5 +1,6 @@
 from gettext import find
 import cv2
+import test
 import math
 from victim_detect import find_mean
 from typing import List
@@ -12,8 +13,10 @@ def process_image(filename:str):
     img = cv2.imread(filename)
     
     img = pre_process_image(pre_process_image(img))
+    cv2.imwrite("pre.jpg", img)
+    img = cv2.imread(test.contrastize("pre.jpg"))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite("greyscaled.jpg", img)
+    img = cv2.equalizeHist(cv2.equalizeHist(img))
     return_filename = "processing/processed.jpg"
     
     img = resize(720, resize(300, img))
@@ -27,23 +30,23 @@ def process_image_gauss(imggray):
     print("Gauss-processing")
     return_filename = "processing/gauss_processed.jpg"
     
-    blur = cv2.GaussianBlur(imggray, (0,0), sigmaX=5, sigmaY=5)
+    blur1 = cv2.GaussianBlur(imggray, (0,0), sigmaX=5, sigmaY=5)
     
-    x, y = blur.shape
+    x, y = blur1.shape
     
-    cv2.imwrite("processing/blur.jpg", blur)
+    cv2.imwrite("processing/blur.jpg", blur1)
     
     divide = imggray
     
     for i in range(x):
         for j in range(y):
-            divide[i][j] = (divide[i][j] + blur[i][j])/2
+            divide[i][j] = (divide[i][j] + blur1[i][j])/2
     
     cv2.imwrite("processing/divide.jpg", divide)
 
-    t = find_mean(imggray)
+    t = find_med(imggray ,x, y)
     print("t =", t)
-    t = 255/(1 + math.exp(0.06*(128 - t)))
+    t = 255/(1 + math.exp(-0.06*(128 - t)))
     print("t =", t)
     thresh = cv2.threshold(divide, t, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
     cv2.imwrite("processing/thresh_1.jpg", thresh)
@@ -54,7 +57,7 @@ def process_image_gauss(imggray):
         for j in range(y):
             thresh[i][j] = (thresh[i][j]*2 + blur[i][j])/3
     
-    thresh = cv2.threshold(thresh, t, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
+    thresh = cv2.threshold(blur1, t, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
     
     cv2.imwrite("processing/thresh.jpg", thresh)
 
@@ -129,24 +132,11 @@ def resize(target_width:int, img):
     
     return img
 
-def find_most_freq(img, x, y):
-    colors = {}
+def find_med(img, x, y):
+    colors = []
     
     for i in range(x):
         for j in range(y):
-            key = img[i][j]
+            colors.append(img[i][j])
             
-            if key in colors:
-                colors[key] += 1
-            else:
-                colors[key] = 1
-
-    most_freq = 0
-    freq_color = -1
-    for key in colors:
-        freq = colors[key]
-        if freq > most_freq:
-            most_freq = freq
-            freq_color = key
-    
-    return freq_color
+    return colors[int(len(colors)/2)]
