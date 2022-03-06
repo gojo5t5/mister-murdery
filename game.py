@@ -1,6 +1,7 @@
 import tkinter as tk, cv2
 import tkinter
 from tkinter import Button, filedialog, Label, PhotoImage
+from main import get_outline
 
 #global variables
 imageSelected = False
@@ -23,13 +24,15 @@ def importImage():
         imageSelected = True
         print(imageSelected) 
         setImage(fileImg)
-        lblFilename = Label(root, text="Image loaded: " + fileImg, font="5")
-        lblFilename.place(x = 10, y = 400)
+        lblFilename = Label(root, text="Image loaded: " + fileImg, font="3")
+        lblFilename.place(x = 10, y = 410)
 
 def setImage(fileImg):
     print("setImage")
     img = cv2.imread(fileImg)
-    imgResized = ResizeWithAspectRatio(img, width = 800)
+    #CHANGE BELOW TO CHANGE SIZE OF IMAGE BEING DISPLAYED
+    #either height = no or width = no
+    imgResized = ResizeWithAspectRatio(img, height = 600)
     cv2.imshow('Loaded Image', imgResized)
 
     """
@@ -44,8 +47,8 @@ def detectImg():
     print("detectImg")
     if (imageSelected == True):
         print(imageSelected)
-        #shows the image fileImg - TO CHANGE
-        setImage(fileImg)
+        #print(get_outline(fileImg))
+        setImage(get_outline(fileImg))
     else:
         print(imageSelected) 
         tk.messagebox.showinfo("Error", "Import an image before trying to detect a person")
@@ -67,7 +70,7 @@ def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
     return cv2.resize(image, dim, interpolation=inter)
 
 #if there's an error change the filepath of the background image
-imgBackgr = PhotoImage(file = "mister-murdery/background.png")
+imgBackgr = PhotoImage(file = "background.png")
 lblBackgr = Label(root, image = imgBackgr)
 lblBackgr.place(x = 0, y = 0)
 
