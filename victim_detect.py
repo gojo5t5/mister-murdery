@@ -39,10 +39,8 @@ def find_victim(filename:str, processed_img) -> str:
     print("Number of contours = ", len(contours))
 
     cv2.drawContours(true_img, [closest_contour], -1, (0, 255, 0), 10)
-    print("PARAS THIS IS NOT")
     cv2.imwrite(return_filename, true_img)
     cv2.imwrite("output/thresh.jpg", thresh)
-    print("WORKING")
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
     return return_filename

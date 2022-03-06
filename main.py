@@ -1,9 +1,7 @@
-import string
 from numpy import array
 from victim_detect import find_victim
 import process
 import sys
-<<<<<<< HEAD
 from cv2 import cv2
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
@@ -42,13 +40,9 @@ def convert_center_to_color(center: array):
         center_to_color_dict[string] = get_color()
     return center_to_color_dict[string]
 
-=======
-import cv2
-
 def get_outline(filename: str)-> str:
     img = process.process_image(filename)
-    return victim_detect.find_victim(filename, img)
+    return find_victim(filename, img)
 
->>>>>>> 320678c929cc3bd4ddf0382670d6503f1dafaff9
 if __name__ == "__main__":
     get_outline(sys.argv[1]) 
